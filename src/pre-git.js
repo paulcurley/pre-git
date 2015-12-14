@@ -1,3 +1,4 @@
+#!/usr/bin/env node --harmony
 'use strict';
 
 var la = require('lazy-ass');
