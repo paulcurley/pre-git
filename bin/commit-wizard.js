@@ -1,3 +1,4 @@
+#!/usr/bin/env node --harmony
 'use strict';
 
 console.log('running commit-wizard in folder %s', process.cwd());

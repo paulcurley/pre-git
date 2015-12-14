@@ -1,3 +1,4 @@
+#!/usr/bin/env node --harmony
 'use strict';
 
 var label = 'post-commit';
