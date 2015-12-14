@@ -37,7 +37,7 @@ function verifyValidDirectory(dir) {
 
 function findPackage(dir) {
   var cwd = process.cwd();
-  if (! dir) {
+  if (!dir) {
     dir = path.join(cwd, gitPrefix);
   }
 
@@ -83,8 +83,7 @@ function getProjRoot() {
         var file = findPackage();
         pkg = require(file);
         projRoot = path.dirname(file);
-      }
-      catch (e) {
+      } catch (e) {
         return resolve(gitRoot);
       }
 
@@ -141,10 +140,7 @@ function getTasks(label) {
   var pkg = getPackage();
   la(check.object(pkg), 'missing package', pkg);
 
-  var run = pkg[label] ||
-    pkg.config &&
-    pkg.config[packageName] &&
-    pkg.config[packageName][label];
+  var run = pkg[label] || pkg.config && pkg.config[packageName] && pkg.config[packageName][label];
 
   if (check.string(run)) {
     run = [run];
@@ -205,9 +201,7 @@ function runAtRoot(root, label) {
 
     const runTaskAt = runTask.bind(null, root);
 
-    return resolve(
-      Promise.each(tasks, runTaskAt)
-    );
+    return resolve(Promise.each(tasks, runTaskAt));
   });
 }
 
@@ -218,10 +212,7 @@ function run(hookLabel) {
   label = hookLabel;
 
   // TODO should the failure action be outside?
-  return getProjRoot()
-    .tap((root) => log('running', hookLabel, 'in', root))
-    .then((root) => runAtRoot(root, hookLabel))
-    .catch((err) => failure(hookLabel, err));
+  return getProjRoot().tap(root => log('running', hookLabel, 'in', root)).then(root => runAtRoot(root, hookLabel)).catch(err => failure(hookLabel, err));
 }
 
 function errorMessage(err) {
@@ -250,8 +241,7 @@ function loadWizard(name) {
     'cz-conventional-changelog': 'conventional-commit-message'
   };
   const loadName = moduleNames[name];
-  la(check.unemptyString(loadName),
-    'Unknown commit message wizard name', name);
+  la(check.unemptyString(loadName), 'Unknown commit message wizard name', name);
   log('loading wizard', loadName, 'for name', name);
   return require(loadName);
 }
@@ -284,8 +274,7 @@ function pickWizard() {
   }
   log('using commit message wizard %s', wizardName);
 
-  const wiz = isBuiltInWizardName(wizardName) ?
-    loadWizard(wizardName) : require(wizardName);
+  const wiz = isBuiltInWizardName(wizardName) ? loadWizard(wizardName) : require(wizardName);
   la(check.fn(wiz.prompter), 'missing wizard prompter', wizardName, wiz);
   return wiz;
 }
@@ -299,7 +288,5 @@ module.exports = {
 };
 
 if (!module.parent) {
-  run('demo-error', () => true)
-    .then(() => log('finished all tasks'))
-    .done();
+  run('demo-error', () => true).then(() => log('finished all tasks')).done();
 }

@@ -1,5 +1,6 @@
 #!/usr/bin/env node --harmony
 
+
 'use strict';
 
 const log = require('debug')('pre-git');
@@ -53,7 +54,7 @@ function haveCommitsToPush() {
           if (!stdout.trim().length) {
             return reject();
           }
-          console.log(label, 'Detected files in diff:',  stdout.trim().split('\n').length);
+          console.log(label, 'Detected files in diff:', stdout.trim().split('\n').length);
           resolve();
         });
       });
@@ -70,12 +71,10 @@ function printNothingToDo() {
 const run = require('pre-git').run;
 const runTask = run.bind(null, label);
 
-haveCommitsToPush()
-  .then(runTask, (err) => {
-    if (err) {
-      return failed(err);
-    }
-    printNothingToDo();
-    process.exit(0);
-  })
-  .done();
+haveCommitsToPush().then(runTask, err => {
+  if (err) {
+    return failed(err);
+  }
+  printNothingToDo();
+  process.exit(0);
+}).done();

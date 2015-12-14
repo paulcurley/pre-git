@@ -48,7 +48,7 @@ function writeJsonToFile(filename, object) {
     console.log('pkgPath', pkgPath);
     process.exit(0);
   }
-}());
+})();
 
 //
 // The root of repository.
@@ -83,11 +83,10 @@ if (!existsSync(git) || !fs.lstatSync(git).isDirectory()) {
   if (!existsSync(hooks)) {
     fs.mkdirSync(hooks);
   }
-}());
+})();
 console.log('git hooks folder %s', hooks);
 
-var hookScripts = ['commit-msg',
-  'pre-commit', 'pre-push', 'post-commit', 'post-merge'];
+var hookScripts = ['commit-msg', 'pre-commit', 'pre-push', 'post-commit', 'post-merge'];
 
 var sourceHooksFolders = join(__dirname, '../hooks');
 
@@ -99,7 +98,7 @@ if (existsSync(sourceHooksFolders)) {
 
 (function addPackageSteps(hookNames) {
   var pkgPath = getRootPackagePath(),
-    targetPackage;
+      targetPackage;
   if (existsSync(pkgPath)) {
     targetPackage = readJsonFile(pkgPath);
     console.log('read target package from %s', pkgPath);
@@ -129,12 +128,10 @@ if (existsSync(sourceHooksFolders)) {
   if (changedPackage) {
     writeJsonToFile(pkgPath, targetPackage);
   }
-
-}(hookScripts));
+})(hookScripts);
 
 function isEmpty(x) {
-  return Array.isArray(x) && x.length === 0 ||
-    !x;
+  return Array.isArray(x) && x.length === 0 || !x;
 }
 
 function commitMessageCommandIsEmpty(pkg) {
@@ -142,9 +139,7 @@ function commitMessageCommandIsEmpty(pkg) {
 }
 
 function missingCommitScript(pkg) {
-  return !pkg.scripts ||
-    !pkg.scripts.commit ||
-    /node_modules\/commitizen/.test(pkg.scripts.commit);
+  return !pkg.scripts || !pkg.scripts.commit || /node_modules\/commitizen/.test(pkg.scripts.commit);
 }
 
 function setupMessageValidation(pkg) {
@@ -158,7 +153,7 @@ function setupMessageValidation(pkg) {
   var hookLabel = 'commit-msg';
 
   var pkgPath = getRootPackagePath(),
-    targetPackage;
+      targetPackage;
   if (existsSync(pkgPath)) {
     targetPackage = readJsonFile(pkgPath);
     console.log('read target package from %s', pkgPath);
@@ -184,8 +179,7 @@ function setupMessageValidation(pkg) {
   if (changedPackage) {
     writeJsonToFile(pkgPath, targetPackage);
   }
-
-}());
+})();
 
 function installHook(name) {
   console.log('installing hook %s', name);

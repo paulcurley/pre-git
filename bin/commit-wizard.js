@@ -1,5 +1,6 @@
 #!/usr/bin/env node --harmony
 
+
 console.log('running commit-wizard in folder %s', process.cwd());
 const la = require('lazy-ass');
 const check = require('check-more-types');
@@ -17,12 +18,10 @@ const Promise = require('bluebird');
 
 const label = 'pre-commit';
 
-const config = pkg.config &&
-  pkg.config['pre-git'];
+const config = pkg.config && pkg.config['pre-git'];
 
 const wizard = preGit.wizard();
-la(check.maybe.object(wizard),
-  'could not get commit message wizard', wizard);
+la(check.maybe.object(wizard), 'could not get commit message wizard', wizard);
 
 function getPreCommitCommands(config) {
   if (!config) {
@@ -39,13 +38,12 @@ function hasPreCommitCommands(config) {
   return check.unemptyArray(getPreCommitCommands(config));
 }
 
-var start = Promise.resolve(git.hasChanges())
-  .then(function (hasSomethingToCommit) {
-    if (!hasSomethingToCommit) {
-      console.log('Nothing to commit');
-      process.exit(0);
-    }
-  });
+var start = Promise.resolve(git.hasChanges()).then(function (hasSomethingToCommit) {
+  if (!hasSomethingToCommit) {
+    console.log('Nothing to commit');
+    process.exit(0);
+  }
+});
 
 if (hasPreCommitCommands(config)) {
   console.log('package %s has pre-commit commands', pkg.name);
@@ -54,9 +52,7 @@ if (hasPreCommitCommands(config)) {
   la(check.fn(run), 'missing pre git run');
   const runLabeled = run.bind(null, label);
 
-  start = start
-    .then(runLabeled)
-    .then(() => console.log('finished pre-commit check'));
+  start = start.then(runLabeled).then(() => console.log('finished pre-commit check'));
 }
 
 /* jshint -W098 */
@@ -69,15 +65,14 @@ function guideUser() {
     console.error(chalk.yellow('You have not set the commit message format'));
     console.error('This wizard does not know what to ask you');
     console.error('Maybe try setting up "simple" commit message format');
-    console.error('See',
-      chalk.underline('https://github.com/bahmutov/pre-git#validating-commit-message'));
+    console.error('See', chalk.underline('https://github.com/bahmutov/pre-git#validating-commit-message'));
     return Promise.reject(new Error('Missing commit format name'));
   }
 
   const inquirer = require('inquirer');
 
   return new Promise(function (resolve, reject) {
-    wizard.prompter(inquirer, (message) => {
+    wizard.prompter(inquirer, message => {
       if (!message) {
         return reject(new Error('No commit message'));
       }
@@ -89,8 +84,7 @@ function guideUser() {
 function commitWithMessage(commitMessage) {
   la(check.unemptyString(commitMessage), 'missing commit message', commitMessage);
   const gitCommit = git.commit;
-  return gitCommit(commitMessage)
-    .then(console.log.bind(console));
+  return gitCommit(commitMessage).then(console.log.bind(console));
 }
 
 function errorMessage(err) {
@@ -126,16 +120,7 @@ function success() {
   console.log('commit wizard has finished');
 }
 
-start
-  .then(guideUser)
-  .then((message) => message.trim())
-  .tap((message) => console.log(message))
-  .then(isValidMessage)
-  .then(commitWithMessage)
-  .then(success)
-  .catch((err) => {
-    console.error(errorMessage(err));
-    process.exit(-1);
-  })
-  .done();
-
+start.then(guideUser).then(message => message.trim()).tap(message => console.log(message)).then(isValidMessage).then(commitWithMessage).then(success).catch(err => {
+  console.error(errorMessage(err));
+  process.exit(-1);
+}).done();

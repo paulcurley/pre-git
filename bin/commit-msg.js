@@ -1,5 +1,6 @@
 #!/usr/bin/env node --harmony
 
+
 'use strict';
 
 const ggit = require('ggit');
@@ -16,10 +17,8 @@ if (!wizard) {
 
 log('found commit message wizard with name', wizard.name);
 
-la(check.fn(wizard.validate),
-  'missing wizard validate method,', Object.keys(wizard));
-la(check.fn(preGit.printError),
-  'missing preGit.printError,', Object.keys(preGit));
+la(check.fn(wizard.validate), 'missing wizard validate method,', Object.keys(wizard));
+la(check.fn(preGit.printError), 'missing preGit.printError,', Object.keys(preGit));
 
 function checkMessage(msg) {
   const isValid = wizard.validate(msg);
@@ -28,11 +27,8 @@ function checkMessage(msg) {
   }
 }
 
-ggit.commitMessage()
-  .then(checkMessage)
-  .catch((err) => {
-    // assuming each validator printed the errors?
-    console.error(err);
-    process.exit(-1);
-  })
-  .done();
+ggit.commitMessage().then(checkMessage).catch(err => {
+  // assuming each validator printed the errors?
+  console.error(err);
+  process.exit(-1);
+}).done();
