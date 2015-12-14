@@ -1,13 +1,13 @@
 'use strict';
 
-const la = require('lazy-ass');
-const check = require('check-more-types');
+var la = require('lazy-ass');
+var check = require('check-more-types');
 
 var child = require('child_process');
 var path = require('path');
 var fs = require('fs');
 
-const log = require('debug')('pre-git');
+var log = require('debug')('pre-git');
 /* jshint -W079 */
 var Promise = require('bluebird');
 
@@ -106,15 +106,15 @@ function failure(label, err) {
   console.error(label, 'You\'ve failed to pass all the hooks.');
   console.error(label);
 
-  const chalk = require('chalk');
+  var chalk = require('chalk');
   if (err instanceof Error) {
     console.error(label, 'An Error was thrown from command');
     if (err.ran) {
       console.error(chalk.supportsColor ? chalk.bold.yellow(err.ran) : err.ran);
     }
 
-    const stack = err.stack.split('\n');
-    const firstLine = stack.shift();
+    var stack = err.stack.split('\n');
+    var firstLine = stack.shift();
     console.error(chalk.supportsColor ? chalk.red(firstLine) : firstLine);
     console.error(label);
     stack.forEach(function trace(line) {
@@ -124,8 +124,8 @@ function failure(label, err) {
     console.error(label, chalk.supportsColor ? chalk.red(err) : err);
   }
 
-  const skipOption = label === 'pre-push' ? '--no-verify' : '-n (--no-verify)';
-  const skipOptionText = chalk.supportsColor ? chalk.bold(skipOption) : skipOption;
+  var skipOption = label === 'pre-push' ? '--no-verify' : '-n (--no-verify)';
+  var skipOptionText = chalk.supportsColor ? chalk.bold(skipOption) : skipOption;
   console.error(label);
   console.error(label, 'You can skip the git hook by running with', skipOptionText);
   console.error(label);
@@ -136,7 +136,7 @@ function failure(label, err) {
 }
 
 function getTasks(label) {
-  const packageName = 'pre-git';
+  var packageName = 'pre-git';
   var pkg = getPackage();
   la(check.object(pkg), 'missing package', pkg);
 
@@ -152,18 +152,18 @@ function getTasks(label) {
 function runTask(root, task) {
   console.log('executing task "' + task + '"');
 
-  const options = {
+  var options = {
     cwd: root,
     env: process.env
   };
 
   return new Promise(function (resolve, reject) {
-    const proc = child.exec(task, options);
+    var proc = child.exec(task, options);
     proc.stdout.on('data', process.stdout.write.bind(process.stdout));
     proc.stderr.on('data', process.stderr.write.bind(process.stderr));
     proc.on('close', function onTaskFinished(code) {
       if (code > 0) {
-        let err = new Error(task + ' closed with code ' + code);
+        var err = new Error(task + ' closed with code ' + code);
         err.ran = task;
         return reject(err);
       }
@@ -199,7 +199,7 @@ function runAtRoot(root, label) {
       return resolve('Nothing to do for ' + label);
     }
 
-    const runTaskAt = runTask.bind(null, root);
+    var runTaskAt = runTask.bind(null, root);
 
     return resolve(Promise.each(tasks, runTaskAt));
   });
@@ -212,7 +212,13 @@ function run(hookLabel) {
   label = hookLabel;
 
   // TODO should the failure action be outside?
-  return getProjRoot().tap(root => log('running', hookLabel, 'in', root)).then(root => runAtRoot(root, hookLabel)).catch(err => failure(hookLabel, err));
+  return getProjRoot().tap(function (root) {
+    return log('running', hookLabel, 'in', root);
+  }).then(function (root) {
+    return runAtRoot(root, hookLabel);
+  }).catch(function (err) {
+    return failure(hookLabel, err);
+  });
 }
 
 function errorMessage(err) {
@@ -225,7 +231,7 @@ function printError(x) {
 
 function isBuiltInWizardName(name) {
   la(check.unemptyString(name), 'invalid name', name);
-  const builtIn = {
+  var builtIn = {
     simple: true,
     conventional: true,
     'cz-conventional-changelog': true
@@ -235,21 +241,21 @@ function isBuiltInWizardName(name) {
 
 function loadWizard(name) {
   la(check.unemptyString(name), 'missing commit wizard name', name);
-  const moduleNames = {
+  var moduleNames = {
     simple: 'simple-commit-message',
     conventional: 'conventional-commit-message',
     'cz-conventional-changelog': 'conventional-commit-message'
   };
-  const loadName = moduleNames[name];
+  var loadName = moduleNames[name];
   la(check.unemptyString(loadName), 'Unknown commit message wizard name', name);
   log('loading wizard', loadName, 'for name', name);
   return require(loadName);
 }
 
 function getWizardName() {
-  const pkg = getPackage();
-  const config = pkg.config && pkg.config['pre-git'];
-  const defaultName = 'simple';
+  var pkg = getPackage();
+  var config = pkg.config && pkg.config['pre-git'];
+  var defaultName = 'simple';
   log('commit message wizard name from', config);
   if (!config) {
     log('no config, using default name', defaultName);
@@ -267,14 +273,14 @@ function getWizardName() {
 }
 
 function pickWizard() {
-  const wizardName = getWizardName();
+  var wizardName = getWizardName();
   if (!wizardName) {
     log('no wizard name set');
     return;
   }
   log('using commit message wizard %s', wizardName);
 
-  const wiz = isBuiltInWizardName(wizardName) ? loadWizard(wizardName) : require(wizardName);
+  var wiz = isBuiltInWizardName(wizardName) ? loadWizard(wizardName) : require(wizardName);
   la(check.fn(wiz.prompter), 'missing wizard prompter', wizardName, wiz);
   return wiz;
 }
@@ -288,5 +294,9 @@ module.exports = {
 };
 
 if (!module.parent) {
-  run('demo-error', () => true).then(() => log('finished all tasks')).done();
+  run('demo-error', function () {
+    return true;
+  }).then(function () {
+    return log('finished all tasks');
+  }).done();
 }

@@ -1,15 +1,12 @@
-#!/usr/bin/env node --harmony
-
-
 'use strict';
 
-const log = require('debug')('pre-git');
+var log = require('debug')('pre-git');
 
 /* jshint -W079 */
-const Promise = require('bluebird');
+var Promise = require('bluebird');
 
-const child = require('child_process');
-const label = 'pre-push';
+var child = require('child_process');
+var label = 'pre-push';
 
 function failed(err) {
   console.error(label, 'Check went wrong.');
@@ -68,10 +65,10 @@ function printNothingToDo() {
   console.log('');
 }
 
-const run = require('pre-git').run;
-const runTask = run.bind(null, label);
+var run = require('pre-git').run;
+var runTask = run.bind(null, label);
 
-haveCommitsToPush().then(runTask, err => {
+haveCommitsToPush().then(runTask, function (err) {
   if (err) {
     return failed(err);
   }

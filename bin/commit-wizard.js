@@ -1,33 +1,32 @@
-#!/usr/bin/env node --harmony
-
+'use strict';
 
 console.log('running commit-wizard in folder %s', process.cwd());
-const la = require('lazy-ass');
-const check = require('check-more-types');
-const join = require('path').join;
-const pkgPath = join(process.cwd(), 'package.json');
-const pkg = require(pkgPath);
-const preGit = require('pre-git');
-const git = require('ggit');
-const chalk = require('chalk');
-const log = require('debug')('pre-git');
+var la = require('lazy-ass');
+var check = require('check-more-types');
+var join = require('path').join;
+var pkgPath = join(process.cwd(), 'package.json');
+var pkg = require(pkgPath);
+var preGit = require('pre-git');
+var git = require('ggit');
+var chalk = require('chalk');
+var log = require('debug')('pre-git');
 la(check.fn(log), 'missing debug log', log);
 
 /* jshint -W079 */
-const Promise = require('bluebird');
+var Promise = require('bluebird');
 
-const label = 'pre-commit';
+var label = 'pre-commit';
 
-const config = pkg.config && pkg.config['pre-git'];
+var config = pkg.config && pkg.config['pre-git'];
 
-const wizard = preGit.wizard();
+var wizard = preGit.wizard();
 la(check.maybe.object(wizard), 'could not get commit message wizard', wizard);
 
 function getPreCommitCommands(config) {
   if (!config) {
     return;
   }
-  const preCommit = config[label];
+  var preCommit = config[label];
   if (check.unemptyString(preCommit)) {
     return [preCommit];
   }
@@ -48,11 +47,13 @@ var start = Promise.resolve(git.hasChanges()).then(function (hasSomethingToCommi
 if (hasPreCommitCommands(config)) {
   console.log('package %s has pre-commit commands', pkg.name);
   console.log(getPreCommitCommands(config).join(', '));
-  const run = preGit.run;
+  var run = preGit.run;
   la(check.fn(run), 'missing pre git run');
-  const runLabeled = run.bind(null, label);
+  var runLabeled = run.bind(null, label);
 
-  start = start.then(runLabeled).then(() => console.log('finished pre-commit check'));
+  start = start.then(runLabeled).then(function () {
+    return console.log('finished pre-commit check');
+  });
 }
 
 /* jshint -W098 */
@@ -69,10 +70,10 @@ function guideUser() {
     return Promise.reject(new Error('Missing commit format name'));
   }
 
-  const inquirer = require('inquirer');
+  var inquirer = require('inquirer');
 
   return new Promise(function (resolve, reject) {
-    wizard.prompter(inquirer, message => {
+    wizard.prompter(inquirer, function (message) {
       if (!message) {
         return reject(new Error('No commit message'));
       }
@@ -83,7 +84,7 @@ function guideUser() {
 
 function commitWithMessage(commitMessage) {
   la(check.unemptyString(commitMessage), 'missing commit message', commitMessage);
-  const gitCommit = git.commit;
+  var gitCommit = git.commit;
   return gitCommit(commitMessage).then(console.log.bind(console));
 }
 
@@ -103,7 +104,7 @@ function isValidMessage(message) {
 
   la(check.unemptyString(message), 'missing message');
 
-  const first = firstLine(message);
+  var first = firstLine(message);
 
   if (!check.unemptyString(first)) {
     return Promise.reject(new Error('missing first line'));
@@ -120,7 +121,11 @@ function success() {
   console.log('commit wizard has finished');
 }
 
-start.then(guideUser).then(message => message.trim()).tap(message => console.log(message)).then(isValidMessage).then(commitWithMessage).then(success).catch(err => {
+start.then(guideUser).then(function (message) {
+  return message.trim();
+}).tap(function (message) {
+  return console.log(message);
+}).then(isValidMessage).then(commitWithMessage).then(success).catch(function (err) {
   console.error(errorMessage(err));
   process.exit(-1);
 }).done();

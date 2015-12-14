@@ -1,12 +1,9 @@
-#!/usr/bin/env node --harmony
-
-
 'use strict';
 
-const log = require('debug')('pre-git');
+var log = require('debug')('pre-git');
 
 /* jshint -W079 */
-const Promise = require('bluebird');
+var Promise = require('bluebird');
 
 var child = require('child_process');
 var label = 'pre-commit';
@@ -52,17 +49,17 @@ function printNothingToDo() {
   console.log('');
 }
 
-const run = require('pre-git').run;
-const runTask = run.bind(null, label);
+var run = require('pre-git').run;
+var runTask = run.bind(null, label);
 
 console.log('running pre-commit script');
-haveChangesToCommit().then(runTask, err => {
+haveChangesToCommit().then(runTask, function (err) {
   if (err) {
     console.error(errorMessage(err));
     process.exit(-1);
   }
   printNothingToDo();
-}).catch(err => {
+}).catch(function (err) {
   console.error(label, 'A problem');
   console.error(errorMessage(err));
   process.exit(-1);
