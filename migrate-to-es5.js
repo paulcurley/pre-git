@@ -9,7 +9,7 @@ var options = {};
 glob("{bin,src}/*.js", options, function (er, files) {
 	var i
 	for (i = 0; i < files.length; i++) {
-		babel.transformFile(files[i], function (err, result){
+		babel.transformFile(files[i], { presets: ["es2015"] }, function (err, result){
 			if (err) {
 				return console.log(err);
 			}
