@@ -55,6 +55,7 @@
     "word-wrap": "1.1.0"
   },
   "devDependencies": {
+    "babel-preset-es2015": "^6.3.13",
     "git-issues": "1.2.0",
     "grunt": "0.4.5",
     "grunt-cli": "0.1.13",
