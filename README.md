@@ -1,5 +1,7 @@
 # pre-git
 
+## Note - Quick hack to work on older versions of node
+
 > Important git hooks implemented using Nodejs for your project.
 
 [![NPM][pre-git-icon]][pre-git-url]
