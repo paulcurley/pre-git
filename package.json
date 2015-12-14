@@ -1,7 +1,7 @@
 {
   "name": "pre-git",
   "description": "Automatically install pre-commit / pre-git hooks for your npm modules.",
-  "version": "0.0.0-semantic-release",
+  "version": "3.1.11-es5",
   "author": "Arnout Kazemier <opensource@observe.it>",
   "bin": {
     "commit-msg": "bin/commit-msg.js",
@@ -64,8 +64,7 @@
     "grunt-nice-package": "0.9.2",
     "jshint-summary": "0.4.0",
     "matchdep": "0.3.0",
-    "mocha": "2.3.4",
-    "semantic-release": "4.3.5"
+    "mocha": "2.3.4"
   },
   "engines": {
     "node": "> 0.8.*"
@@ -100,7 +99,6 @@
     "mocha": "mocha --harmony src/*-spec.js",
     "issues": "git-issues",
     "size": "t=\"$(npm pack .)\"; wc -c \"${t}\"; tar tvf \"${t}\"; rm \"${t}\";",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "demo": "DEBUG=pre-git node --harmony src/pre-git.js"
   }
 }
